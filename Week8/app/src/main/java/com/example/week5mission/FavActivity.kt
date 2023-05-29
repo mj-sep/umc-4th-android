@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.week5mission.databinding.ActivityFavBinding
 
 
-data class FavData(val contents: String, val status: String)
+data class FavData(val contents: String)
 
 class FavActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFavBinding
@@ -25,9 +25,10 @@ class FavActivity : AppCompatActivity() {
         val allValues: Map<String, *> = sharedPreferences.all
 
         for((key, value) in allValues) {
-            datalist.add(FavData(key, value as String))
+            datalist.add(FavData(key))
         }
 
+        Log.d("datalist", datalist.toString())
         binding.favrecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.favrecyclerView.adapter = FavAdapter(datalist)
         binding.favrecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))

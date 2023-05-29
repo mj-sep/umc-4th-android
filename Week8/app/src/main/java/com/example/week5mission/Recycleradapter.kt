@@ -6,6 +6,7 @@ import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.week5mission.databinding.RecyclerviewItemBinding
 import kotlinx.coroutines.CoroutineScope
@@ -16,22 +17,19 @@ import kotlinx.coroutines.launch
 class RecyclerAdapter(
     private val context: Context,
     private var contentsList: List<Memo>,
+    private var favdatalist: ArrayList<FavData>,
 
-) : RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder>() {
+    ) : RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder>() {
 
     lateinit var binding: RecyclerviewItemBinding
 
     // 리스너 객체 참조를 저장하는 변수
     private var mListener: OnItemClickListener ?= null
-    private var rListener: OnItem2ClickListener ?= null
 
     interface OnItemClickListener {
         fun onItemClick(con: String)
         fun onItemLongClick(con: String)
-    }
-
-    interface OnItem2ClickListener {
-        fun onItemClick(con: String, status: String) // Fav
+        fun onItemFavClick(con: String, status: String) // Fav
         fun onItemLikeClick (con: String, status: Boolean)
     }
 
@@ -39,11 +37,6 @@ class RecyclerAdapter(
     fun setOnItemClickListener(listener: OnItemClickListener) {
         mListener = listener
     }
-
-    fun setOnItem2ClickListener(listener: OnItem2ClickListener) {
-        rListener = listener
-    }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
         binding = RecyclerviewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -56,12 +49,12 @@ class RecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
         holder.bind(contentsList[position])
 
-        holder.binding.contentsLike.setOnClickListener {
-            val pos = contentsList[position].contents
-            val isChecked = holder.binding.contentsLike.isChecked
-            Log.d("pos 인식 테스트-좋아요", "$pos, $isChecked, $rListener")
-            rListener?.onItemLikeClick(pos, isChecked)
-        }
+
+    }
+
+    fun updateData(newData: List<Memo>) {
+        contentsList = newData
+        notifyDataSetChanged()
     }
 
     // Create ViewHolder
@@ -78,41 +71,37 @@ class RecyclerAdapter(
             }
             itemView.setOnLongClickListener {
                 val pos = contentsList[adapterPosition].contents
-                Log.d("pos 인식 테스트-onLongClick", pos)
+                Log.d("pos 인식 테스트-onLongClick", "$pos, $mListener")
                 mListener?.onItemLongClick(pos)
                 return@setOnLongClickListener true
             }
 
             binding.contentsFav.setOnClickListener {
                 val positionId = contentsList[adapterPosition].contents
-                Log.d("pos 인식 테스트-즐겨찾기", positionId)
-                rListener?.onItemClick(positionId, binding.favBoolean.text as String)
-                if(binding.favBoolean.text.equals("false")) {
-                    binding.favBoolean.text = "true"
+                Log.d("pos 인식 테스트-즐겨찾기", "$positionId $mListener")
+                mListener?.onItemFavClick(positionId, favdatalist.contains(FavData(positionId)).toString())
+                if(favdatalist.contains(FavData(positionId))) { // 현재 true 상태 -> false로 변경해야 함
                     binding.contentsFav.setImageResource(R.drawable.star)
-                } else {
-                    binding.favBoolean.text = "false"
+                } else { // 현재 false 상태 -> true로 변경해야 함
                     binding.contentsFav.setImageResource(R.drawable.blankstar)
                 }
                 return@setOnClickListener
             }
 
+            binding.contentsLike.setOnClickListener {
+                val pos = contentsList[adapterPosition].contents
+                val isChecked = binding.contentsLike.isChecked
+                Log.d("pos 인식 테스트-좋아요", "$pos, $isChecked, $mListener")
+                mListener?.onItemLikeClick(pos, isChecked)
+            }
         }
 
         fun bind(item: Memo) {
             binding.contentListviewItem.text = item.contents
             binding.contentsLike.isChecked = item.likes
-
-            /*
-            binding.contentsLike.setOnClickListener {
-                val posi = item.contents
-                val like = item.likes
-
-                Log.d("pos 인식 테스트-좋아요", "$posi, $like, $rListener")
-                rListener?.onItemLongClick(posi, like)
-            }
-
-             */
+            if(favdatalist.contains(FavData(item.contents))) {
+                binding.contentsFav.setImageResource(R.drawable.star)
+            } else binding.contentsFav.setImageResource(R.drawable.blankstar)
         }
     }
 }

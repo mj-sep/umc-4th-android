@@ -29,7 +29,6 @@ class FavAdapter(
     inner class ViewHolder(private val binding: RecyclerviewFavBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FavData) {
             binding.favContentListviewItem.text = item.contents
-            binding.favBoolean.text = item.status
         }
     }
 }
