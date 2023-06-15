@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Week10</string>
+    <string name="social_login_info_naver_client_id">JJ6xhhT1Gcn2sVQUh5Ko</string>
+    <string name="social_login_info_naver_client_secret">TAYLPGbmqT</string>
+    <string name="social_login_info_naver_client_name">네이버아이디 로그인</string>
+</resources>
