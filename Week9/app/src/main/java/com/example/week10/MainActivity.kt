@@ -69,10 +69,10 @@ class MainActivity : AppCompatActivity() {
         val apiServiceCovid = retrofitCovid.create(ApiService::class.java)
 
 
-        val servicekey = "+jtuVcCIYGWdiEZJ6AzEWh6ahO0JAgwERAiEjjHHElQpOyXGStixK4tOve0gvB8ovCLEBDcEjjvtS0Mk3gVErQ=="
+        val servicekey = "서비스 키 토큰"
 
         // OpenWeatherMap API
-        val call = apiService.getCurrentWeatherByCityName(q = "New York", appid = "6cf4226db4c82b727a920c3a27b4c4d8")
+        val call = apiService.getCurrentWeatherByCityName(q = "New York", appid = "서비스 키 토큰")
         call.enqueue(object: Callback<Response> {
             override fun onResponse(call: Call<Response>, response: retrofit2.Response<Response>) {
                 if(response.isSuccessful) {
